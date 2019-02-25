@@ -1,0 +1,9 @@
+name: wazo-ctid-fax
+namespace: sboily
+version: 0.0.1
+author: Sylvain Boily
+display_name: CTI fax
+tags:
+  - experimental
+  - fax
+homepage: https://github.com/sboily/wazo-ctid-fax

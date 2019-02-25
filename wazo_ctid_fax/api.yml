@@ -1,0 +1,123 @@
+paths:
+  /fax:
+    get:
+      summary: Get fax list
+      description: '**Required ACL:** `ctid-ng.fax.read`'
+      tags:
+      - fax
+      responses:
+        '200':
+          description: The list of fax
+          schema:
+            $ref: '#/definitions/FaxList'
+        '503':
+          $ref: '#/responses/AnotherServiceUnavailable'
+    post:
+      summary: Send fax
+      description: '**Required ACL:** `ctid-ng.fax.create`'
+      tags:
+      - fax
+      consumes:
+      - application/octet-stream
+      parameters:
+      - $ref: '#/parameters/fax_extension'
+      - $ref: '#/parameters/fax_context'
+      - $ref: '#/parameters/fax_caller_id'
+      - $ref: '#/parameters/fax_user_id'
+      - $ref: '#/parameters/FaxFile'
+      responses:
+        '201':
+          $ref: '#/responses/FaxItem'
+        '503':
+          $ref: '#/responses/AnotherServiceUnavailable'
+  /fax/stats:
+    get:
+      summary: Get faxes stats
+      description: '**Required ACL:** `ctid-ng.fax.stats.read`'
+      tags:
+      - fax
+      responses:
+        '200':
+          description: The fax stats
+          schema:
+            $ref: '#/definitions/FaxList'
+        '503':
+          $ref: '#/responses/AnotherServiceUnavailable'
+  /fax/{fax_session}:
+    get:
+      summary: Get fax status
+      description: '**Required ACL:** `ctid-ng.fax.{fax_session}.read`'
+      parameters:
+        - $ref: '#/parameters/FaxSession'
+      tags:
+      - fax
+      responses:
+        '200':
+          description: The status of a fax
+          schema:
+            $ref: '#/definitions/FaxItem'
+        '503':
+          $ref: '#/responses/AnotherServiceUnavailable'
+    delete:
+      summary: Cancel fax
+      description: '**Required ACL:** `ctid-ng.fax.{fax_session}.cancel`'
+      parameters:
+        - $ref: '#/parameters/FaxSession'
+      tags:
+      - fax
+      responses:
+        '204':
+          description: Fax has been cancel
+          schema:
+            $ref: '#/definitions/FaxItem'
+        '503':
+          $ref: '#/responses/AnotherServiceUnavailable'
+definitions:
+  FaxItem:
+    type: object
+    properties:
+      id:
+        description: Unique identifier of the fax
+        type: string
+  FaxList:
+    type: object
+    properties:
+      items:
+        $ref: '#/definitions/FaxItem'
+parameters:
+  FaxSession:
+    name: fax_session
+    in: path
+    description: Session name of the fax
+    required: true
+    type: string
+  FaxFile:
+    name: body
+    in: body
+    required: true
+    schema:
+      format: binary
+  fax_caller_id:
+    required: true
+    name: fax_caller_id
+    in: query
+    type: string
+    description: CallerID of fax sender
+  fax_user_id:
+    required: true
+    name: fax_user_id
+    in: query
+    type: string
+    description: Wazo userID fax sender
+  fax_context:
+    required: true
+    name: fax_context
+    in: query
+    type: string
+    description: Context of fax routing
+  fax_extension:
+    required: true
+    name: fax_extension
+    in: query
+    type: string
+    description: Number to send fax
